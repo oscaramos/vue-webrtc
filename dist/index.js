@@ -166,7 +166,9 @@ exports.default = {
       rtcmConnection: null,
       localVideo: null,
       videoList: [],
-      canvas: null
+      canvas: null,
+      messages: [],
+      message: null
     };
   },
 
@@ -199,6 +201,10 @@ exports.default = {
       type: Boolean,
       default: true
     },
+    enableChat: {
+      type: Boolean,
+      default: false
+    },
     enableLogs: {
       type: Boolean,
       default: false
@@ -222,7 +228,8 @@ exports.default = {
     this.rtcmConnection.enableLogs = this.enableLogs;
     this.rtcmConnection.session = {
       audio: this.enableAudio,
-      video: this.enableVideo
+      video: this.enableVideo,
+      data: this.enableChat
     };
     this.rtcmConnection.sdpConstraints.mandatory = {
       OfferToReceiveAudio: this.enableAudio,
@@ -283,11 +290,40 @@ exports.default = {
         }
       });
       that.videoList = newList;
+
+      if (this.enableChat) {
+        this.clearMessages(stream);
+      }
+
       that.$emit('left-room', stream.streamid);
+    };
+    this.rtcmConnection.onmessage = function (stream) {
+      that.messages.push({
+        message: stream.data,
+        userid: stream.userid
+      });
+      that.$emit('received-message', stream.data);
     };
   },
 
   methods: {
+    clearMessages: function clearMessages(stream) {
+      var newList = this.messages.filter(function (item) {
+        return item.userid !== stream.userid;
+      });
+      this.messages = newList;
+    },
+    sendMessage: function sendMessage() {
+      var message = this.message;
+      if (message.length < 2) {
+        console.log('message length less');
+      } else {
+        this.rtcmConnection.send(message);
+        this.$emit('sent-message', message);
+
+        this.message = null;
+      }
+    },
     join: function join() {
       var that = this;
       this.rtcmConnection.openOrJoin(this.roomId, function (isRoomExist, roomid) {
@@ -407,7 +443,7 @@ exports = module.exports = __webpack_require__(6)();
 
 
 // module
-exports.push([module.i, ".video-list[data-v-49ef9b35]{background:#f5f5f5;height:auto}.video-list div[data-v-49ef9b35]{padding:0}.video-item[data-v-49ef9b35]{background:#c5c4c4;display:inline-block}", ""]);
+exports.push([module.i, ".video-list[data-v-49ef9b35]{background:#f5f5f5;height:auto}.video-list div[data-v-49ef9b35]{padding:0}.video-item[data-v-49ef9b35]{background:#c5c4c4;display:inline-block}.flex-container[data-v-49ef9b35]{display:flex}.flex-container>div[data-v-49ef9b35]{margin:5px}.chat-list[data-v-49ef9b35]{display:flex;flex-direction:column}", ""]);
 
 // exports
 
@@ -6641,6 +6677,8 @@ module.exports = function normalizeComponent (
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
+    staticClass: "flex-container"
+  }, [_c('div', {
     staticClass: "video-list"
   }, _vm._l((_vm.videoList), function(item) {
     return _c('div', {
@@ -6663,7 +6701,44 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "muted": item.muted
       }
     })])
-  }), 0)
+  }), 0), _vm._v(" "), (_vm.enableChat) ? _c('div', {
+    staticClass: "chat-list"
+  }, [_vm._l((_vm.messages), function(chat, index) {
+    return _c('div', {
+      key: chat.userid
+    }, [_c('span', [_vm._v(_vm._s(chat.message))])])
+  }), _vm._v(" "), _c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.message),
+      expression: "message"
+    }],
+    attrs: {
+      "type": "text",
+      "name": "message",
+      "value": ""
+    },
+    domProps: {
+      "value": (_vm.message)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.message = $event.target.value
+      }
+    }
+  }), _vm._v(" "), _c('button', {
+    attrs: {
+      "type": "button",
+      "name": "button"
+    },
+    on: {
+      "click": function($event) {
+        return _vm.sendMessage()
+      }
+    }
+  }, [_vm._v("Send")])], 2) : _vm._e()])
 },staticRenderFns: []}
 
 /***/ }),
