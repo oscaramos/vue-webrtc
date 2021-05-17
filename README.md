@@ -60,6 +60,7 @@ npm run demo
 | enableAudio      | boolean  | true | enables audio on join      |
 | enableVideo      | boolean  | true | enables video on join      |
 | enableChat       | boolean  | false | enables chat on join      |
+| hideChat         | boolean  | false | hides integrated chat      |
 | enableLogs       | boolean  | false | enables webrtc console logs    |
 | stunServer       | string  | null | set STUN server url to 'stun:yourSTUN.com:port'    |
 | turnServer       | string  | null | set TURN server url to 'username@password%turn:yourTURN.com:port'    |
@@ -84,6 +85,7 @@ npm run demo
 | leave          | void     | Leave a room                                                            |
 | capture        | void     | Capture the current image through the webcam as base64 encoded string   |
 | shareScreen    | void     | Share your screen or an app as video   |
+| sendMessage    | void     | Send a message (broadcast)   |
 
 ### Styles
 

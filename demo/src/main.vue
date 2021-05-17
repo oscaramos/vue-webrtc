@@ -12,11 +12,15 @@
           <vue-webrtc ref="webrtc"
                       width="100%"
                       :roomId="roomId"
+                      enable-chat
+                      hide-chat
                       v-on:joined-room="logEvent"
                       v-on:left-room="logEvent"
                       v-on:opened-room="logEvent"
                       v-on:share-started="logEvent"
                       v-on:share-stopped="logEvent"
+                      v-on:sent-message="logEvent"
+                      v-on:received-message="handleReceivedMessage"
                       @error="onError" />
         </div>
         <div class="row">
@@ -26,6 +30,15 @@
             <button type="button" class="btn btn-primary" @click="onCapture">Capture Photo</button>
             <button type="button" class="btn btn-primary" @click="onShareScreen">Share Screen</button>
           </div>
+        </div>
+        <div>
+          <h2>Controlled chat</h2>
+          <h4>Messages</h4>
+          <div v-for="message in messages">
+            {{message}}
+          </div>
+          <input type="text" v-model="message">
+          <button type="button" class="btn" @click="onSendMessage">Send</button>
         </div>
       </div>
     </div>
@@ -43,8 +56,7 @@
 <script>
   import Vue from 'vue'
   import { WebRTC } from 'plugin';
-  import { find, head } from 'lodash';
-  
+
   import * as io from 'socket.io-client'
   window.io = io
 
@@ -57,7 +69,8 @@
     data() {
       return {
         img: null,
-        roomId: "public-room"
+        roomId: "public-room-chat",
+        messages: [],
       };
     },
     computed: {
@@ -79,6 +92,14 @@
       },
       onError(error, stream) {
         console.log('On Error Event', error, stream);
+      },
+      onSendMessage() {
+        console.log(`sent: ${this.message}`);
+        this.$refs.webrtc.sendMessage(this.message);
+      },
+      handleReceivedMessage(message) {
+        console.log(`received: ${message}`);
+        this.messages.push(message)
       },
       logEvent(event) {
         console.log('Event : ', event);

@@ -8,7 +8,7 @@
           <video controls autoplay playsinline ref="videos" :height="cameraHeight" :muted="item.muted" :id="item.id"></video>
         </div>
     </div>
-    <div v-if="enableChat" class="chat-list">
+    <div v-if="enableChat && !hideChat" class="chat-list">
       <div v-for="(chat,index) in messages"
            v-bind:key="chat.userid">
            <span>{{chat.message}}</span>
@@ -72,6 +72,10 @@
         default: false
       },
       enableLogs: {
+        type: Boolean,
+        default: false
+      },
+      hideChat: {
         type: Boolean,
         default: false
       },
@@ -180,8 +184,8 @@
         });
         this.messages = newList
       },
-      sendMessage(){
-        var message = this.message
+      sendMessage(messageProp){
+        var message = messageProp? messageProp: this.message
         if(message.length < 2){
           console.log('message length less')
         }else{
