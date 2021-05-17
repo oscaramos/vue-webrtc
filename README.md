@@ -59,6 +59,7 @@ npm run demo
 | screenshotFormat | string  | 'image/jpeg' | format of screenshot      |
 | enableAudio      | boolean  | true | enables audio on join      |
 | enableVideo      | boolean  | true | enables video on join      |
+| enableChat       | boolean  | false | enables chat on join      |
 | enableLogs       | boolean  | false | enables webrtc console logs    |
 | stunServer       | string  | null | set STUN server url to 'stun:yourSTUN.com:port'    |
 | turnServer       | string  | null | set TURN server url to 'username@password%turn:yourTURN.com:port'    |
@@ -72,6 +73,8 @@ npm run demo
 | left-room      | video.id | emitted when anyone leaves the room                           |
 | share-started  | video.id | emitted when a local screen share stream starts               |
 | share-stopped  | video.id | emitted when a local screen share stream stops                |
+| received-message  | message | emitted when a message is received                |
+| sent-message  | message | emitted when a message is sent                |
 
 ### Methods
 
@@ -130,7 +133,7 @@ This project is based off of the excellent work found at WebRTC Experiments:
 https://www.rtcmulticonnection.org/
 
 
-The Vue.js work is based on this camera component:  
+The Vue.js work is based on this camera component:
 [@vinceg vue-web-cam](https://github.com/vinceg/vue-web-cam)
 
 
